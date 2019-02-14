@@ -109,7 +109,7 @@ import (
 	"strings"
 	"unicode"
 
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
 var ForceFloats bool
@@ -490,7 +490,10 @@ func typeForValue(value interface{}, structName string, tags []string, subStruct
 	}
 	v := reflect.TypeOf(value).Name()
 	if v == "float64" && convertFloats {
-		v = disambiguateFloatInt(value)
+		return disambiguateFloatInt(value)
+	}
+	if v == "string" && strings.HasPrefix(value.(string), "@type:") {
+		return strings.Split(value.(string), ":")[1]
 	}
 	return v
 }
